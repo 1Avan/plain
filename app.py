@@ -7,10 +7,9 @@ import jieba
 from pyecharts.charts import Bar, WordCloud
 from pyecharts import options as opts
 import re # 正则表达式库
-import nltk# 停用词库
+from nltk.corpus import stopwords # 停用词库
 
 def remove_stopwords(text):
-    stopwords = nltk.download("stopwords")
     stop_words = set(stopwords.words('english'))
     words = text.split()
     filtered_words = [word for word in words if word.lower() not in stop_words]
