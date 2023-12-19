@@ -7,10 +7,11 @@ import jieba
 from pyecharts.charts import Bar, WordCloud
 from pyecharts import options as opts
 import re # 正则表达式库
-from nltk.corpus import stopwords # 停用词库
+# from nltk.corpus import stopwords # 停用词库
 
 def remove_stopwords(text):
-    stop_words = set(stopwords.words('english'))
+    # stop_words = set(stopwords.words('english'))
+    stop_words = {'my', 'not', 'couldn', "mustn't", 'and', 'why', "weren't", 'its', 'same', 'hasn', 'again', 'being', "you'd", 'hers', 'don', "wasn't", 'more', "isn't", 'when', 'ma', 'were', 't', 'by', 're', "couldn't", 'we', 'that', "hadn't", 'she', 'down', 's', 'themselves', 'each', 'because', 'having', "you're", 'herself', 'a', 'those', 'them', 'above', 'how', 'only', 'shouldn', 've', 'itself', 'be', 'out', 'up', 'until', 'whom', 'yours', 'did', 'our', 'through', 'below', 'won', "won't", 'nor', 'now', 'off', 'while', "should've", 'wouldn', 'll', 'needn', "mightn't", 'didn', 'hadn', 'an', "wouldn't", 'from', 'in', 'all', 'yourselves', 'both', 'after', 'he', 'few', "you've", 'at', 'these', 'him', "aren't", "haven't", 'his', 'has', 'you', 'myself', 'aren', 'with', 'it', 'will', 'any', "shan't", 'than', 'some', 'haven', 'mustn', "shouldn't", 'theirs', 'been', 'their', 'about', 'on', "you'll", 'm', 'into', 'himself', 'yourself', 'doesn', 'are', 'such', 'your', 'against', 'to', 'mightn', 'doing', 'further', 'over', 'as', 'they', 'during', 'so', 'there', 'between', 'which', 'once', 'me', 'had', 'here', 'under', 'most', 'can', 'but', 'before', 'wasn', "that'll", 'd', 'just', "she's", "it's", 'other', 'have', 'no', 'i', "didn't", 'her', "don't", 'ours', 'very', 'the', 'should', 'too', "needn't", 'if', 'of', 'was', 'isn', 'own', 'what', 'where', 'ourselves', 'or', 'this', 'ain', 'then', 'for', 'weren', 'do', 'who', 'is', "hasn't", "doesn't", 'shan', 'am', 'o', 'y', 'does'}
     words = text.split()
     filtered_words = [word for word in words if word.lower() not in stop_words]
     return ' '.join(filtered_words)
