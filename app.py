@@ -5,7 +5,7 @@ import streamlit_echarts as st_echarts
 import requests
 from bs4 import BeautifulSoup
 import jieba
-from pyecharts.charts import Bar, WordCloud,Map
+from pyecharts.charts import Bar, WordCloud, Map, Boxplot
 # steamlit中嵌入pyechats前端代码
 import streamlit.components.v1 as components
 from pyecharts import options as opts
@@ -80,113 +80,143 @@ def page_home():
 def page_ciyun():
     # 词云数据
     word_counts = textFn()
-    # 字典按值从大到小取前20个
-    word_counts_20 = dict(sorted(word_counts.items(), key=lambda x: x[1], reverse=True))
-    wordcloud = WordCloud()
-    wordcloud.add(
-        "",
-        list(word_counts_20.items()),
-        word_size_range=[20, 100]
-    )
-    wordcloud.set_global_opts(title_opts=opts.TitleOpts(title="WordCloud Chart"))
-    st_echarts.st_pyecharts(wordcloud)
+    if word_counts:
+        # 字典按值从大到小取前20个
+        word_counts_20 = dict(sorted(word_counts.items(), key=lambda x: x[1], reverse=True))
+        wordcloud = WordCloud()
+        wordcloud.add(
+            "",
+            list(word_counts_20.items()),
+            word_size_range=[20, 100]
+        )
+        wordcloud.set_global_opts(title_opts=opts.TitleOpts(title="WordCloud Chart"))
+        st_echarts.st_pyecharts(wordcloud)
 def page_pie():
     # 饼状图页面
     word_counts_20 = textFn()
-    word_list = [(x,y) for x,y in word_counts_20.items()]
-    pie = pyecharts.charts.Pie()
-    pie.add("",word_list, radius=["40%", "75%"])
-    pie.set_global_opts(title_opts=opts.TitleOpts(title=""))
-    st_echarts.st_pyecharts(pie)
+    if word_counts_20:
+        word_list = [(x,y) for x,y in word_counts_20.items()]
+        pie = pyecharts.charts.Pie()
+        pie.add("",word_list, radius=["40%", "75%"])
+        pie.set_global_opts(title_opts=opts.TitleOpts(title=""))
+        st_echarts.st_pyecharts(pie)
 def page_broken():
     # 这是折线图
     word_counts_20 = textFn()
-    val = list(map(int, word_counts_20.values()))
-    wordList = list(word_counts_20.keys())
-    line = pyecharts.charts.Line()
-    line.add_xaxis(wordList)
-    line.add_yaxis("关键词",val)
-    # 设置 x 轴标签旋转角度为 45 度
-    line.set_global_opts(
-        xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=45))
-    )
-    st_echarts.st_pyecharts(line)
+    if word_counts_20:
+        val = list(map(int, word_counts_20.values()))
+        wordList = list(word_counts_20.keys())
+        line = pyecharts.charts.Line()
+        line.add_xaxis(wordList)
+        line.add_yaxis("关键词",val)
+        # 设置 x 轴标签旋转角度为 45 度
+        line.set_global_opts(
+            xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=45))
+        )
+        st_echarts.st_pyecharts(line)
 def page_point():
     # 这是散点图
     word_counts_20 = textFn()
-    val = list(map(int, word_counts_20.values()))
-    wordList = list(word_counts_20.keys())
-    size_data = [10, 20, 30, 40, 50, 60]
-    es = pyecharts.charts.EffectScatter()
-    es.add_xaxis(wordList)
-    es.add_yaxis("关键词",val,symbol_size=size_data)
-    # 设置 x 轴标签旋转角度为 45 度
-    es.set_global_opts(
-        xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=45))
-    )
-    st_echarts.st_pyecharts(es)
+    if word_counts_20:
+        val = list(map(int, word_counts_20.values()))
+        wordList = list(word_counts_20.keys())
+        size_data = [10, 20, 30, 40, 50, 60]
+        es = pyecharts.charts.EffectScatter()
+        es.add_xaxis(wordList)
+        es.add_yaxis("关键词",val,symbol_size=size_data)
+        # 设置 x 轴标签旋转角度为 45 度
+        es.set_global_opts(
+            xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=45))
+        )
+        st_echarts.st_pyecharts(es)
 def page_box():
     # 这是箱型图
     word_counts_20 = textFn()
-    val = list(map(int, word_counts_20.values()))
-    wordList = list(word_counts_20.keys())
-    boxplot = pyecharts.charts.Boxplot()
-    boxplot.add_xaxis(wordList)
-    boxplot.add_yaxis("关键词", val)
+    if word_counts_20:
+        val = list(map(int, word_counts_20.values()))
+        vals = list()
+        for i in val:
+            temp = [x for x in range(int(i/2-2),int(i/2+3))]
+            vals.append(temp)
+        wordList = list(word_counts_20.keys())
+        # 创建箱形图
+        box_plot = Boxplot()
+        box_plot.add_xaxis(wordList)
+        box_plot.add_yaxis("关键词", vals)
+        box_plot.set_global_opts(title_opts=opts.TitleOpts(title="箱形图示例"))
+        htmlcode = box_plot.render_embed()  # 嵌入式渲染
+        components.html(htmlcode, width=1000, height=600)
+def page_funnel():
+
+# 漏斗图页面
+    # 字典按值从大到小取前20个
+    word_counts_20 = textFn()
+    if word_counts_20:
+        # [()]
+        word_list = [(x,y) for x,y in word_counts_20.items()]
+        funnel = (
+            pyecharts.charts.Funnel()
+            .add(series_name="",data_pair=word_list)
+            .set_colors(["#FFD700", "#FFA500", "#FF4500", "#FF6347", "#FF8C00"])  # 设置漏斗图颜色
+            # .set_global_opts(title_opts=opts.TitleOpts(title="Funnel Chart"))
+            .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))  # 设置标签格式
+        )
+        st_echarts.st_pyecharts(funnel)
+def get_douban_new_movies():
+    url = 'https://movie.douban.com/cinema/nowplaying/'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    movie_list_soup = soup.find('div', id='nowplaying')
+    movie_list = []
+    for movie_li in movie_list_soup.find_all('li', class_='list-item'):
+        movie_name = movie_li['data-title']
+        movie_score = movie_li['data-score']
+        movie_actors = movie_li['data-actors']
+        movie_url = movie_li.find('a')['href']
+        movie_list.append({'名称': movie_name, '评分': movie_score, '演员': movie_actors, '链接': movie_url})
+    return movie_list
+def page_movie():
+    df_index = get_douban_new_movies()
+    sorted_movies = sorted(df_index, key=lambda x: x['评分'], reverse=True)
+    top_10_movies = sorted_movies[:10]
+    titleList = list()
+    scoreList = list()
+    linkList = list()
+    dataList = list()
+    for item in top_10_movies:
+        titleList.append(item['名称'])
+        scoreList.append(float(item['评分']))
+        linkList.append(item['链接'])
+        dataList.append(item.values())
+    bar = Bar()
+    bar.add_xaxis(titleList)
+    bar.add_yaxis("豆瓣评分", scoreList)
     # 设置 x 轴标签旋转角度为 45 度
-    boxplot.set_global_opts(
-        xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=45))
+    bar.set_global_opts(
+        xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=20))
     )
-    st_echarts.st_pyecharts(boxplot)
-# def page_movie():
-#     df_index = gp.douban_movie_list()
-#     df_index2 = gp.douban_week_praise_list()
-#     dataList = list()
-#     for item in df_index2.iterrows():
-#         temList = list()
-#         temList.append(item[1][0])
-#         temList.append(item[1][3])
-#         temList.append(item[1][2])
-#         temList.append(item[1][1])
-#         dataList.append(temList)
-#     dataList = sorted(dataList, key=lambda x: x[1])
-#     titleList = list()
-#     scoreList = list()
-#     imgList = list()
-#     linkList = list()
-#     for item in df_index.iterrows():
-#         # print(item[1][2],item[1][0],item[1][5])
-#         titleList.append(item[1][2])
-#         scoreList.append(float(item[1][0]))
-#         imgList.append(item[1][4])
-#         linkList.append(item[1][5])
-#     bar = Bar()
-#     bar.add_xaxis(titleList)
-#     bar.add_yaxis("豆瓣评分", scoreList)
-#     # 设置 x 轴标签旋转角度为 45 度
-#     bar.set_global_opts(
-#         xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=20))
-#     )
-#     st.title("豆瓣新片榜")
-#     st_echarts.st_pyecharts(bar)
-#     expander_1 = st.expander('观看入口：')
-#     # 循环遍历图片列表并显示图片
-#     for i in range(len(imgList)):
-#         # unsafe_allow_html允许write插入html标签
-#         expander_1.write(f"<a href={linkList[i]}>{titleList[i]}</a>", unsafe_allow_html=True)
-#     st.title("豆瓣一周口碑榜")
-#     headers = ['影片', '排名', '趋势',"链接"]
-#     # 编写HTML代码，包括表头和数据行
-#     table_html = f"<table><thead><tr>{''.join(f'<th>{header}</th>' for header in headers)}</tr></thead><tbody>"
-#     for row in dataList:
-#         table_html += f"<tr>{''.join(f'<td>{data}</td>' for data in row)}</tr>"
-#     table_html += "</tbody></table>"
-#     # 使用st.write()函数显示自定义表格
-#     st.write(table_html, unsafe_allow_html=True)
+    st.title("豆瓣新片榜")
+    st_echarts.st_pyecharts(bar)
+    expander_1 = st.expander('观看入口：')
+    # 循环遍历图片列表并显示图片
+    for i in range(len(linkList)):
+        # unsafe_allow_html允许write插入html标签
+        expander_1.write(f"<a href='{str(linkList[i])}'>{titleList[i]}</a>", unsafe_allow_html=True)
+
+    headers = ['影片', '排名', '演员',"链接"]
+    # 编写HTML代码，包括表头和数据行
+    table_html = f"<table><thead><tr>{''.join(f'<th>{header}</th>' for header in headers)}</tr></thead><tbody>"
+    for row in dataList:
+        table_html += f"<tr>{''.join(f'<td>{data}</td>' for data in row)}</tr>"
+    table_html += "</tbody></table>"
+    # 使用st.write()函数显示自定义表格
+    st.write(table_html, unsafe_allow_html=True)
 def page_weather():
     # openweathermap api-key
     api_key = "12b2817fbec86915a6e9b4dbbd3d9036"
-
     def get_weather(city):
         url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
         response = requests.get(url)
@@ -233,7 +263,6 @@ def page_weather():
             st_echarts.st_pyecharts(bar)
         # 数据示例
         # data = [("北京市", 111)]
-
         data = get_temperatureAll()
 
         map_chart = (
@@ -275,38 +304,6 @@ def page_weather():
         htmlcode = map_chart.render_embed()  # 嵌入式渲染
         components.html(htmlcode, width=1000, height=600)
     main()
-def page_funnel():
-    # 漏斗图页面
-    st.title('欢迎使用网页词频可视化工具! 👋')
-    input_url = st.text_input("Enter URL:")
-    if input_url.strip() == "":
-        return
-    else:
-        text = crawlingFn(input_url)
-        words = jieba.lcut(text)  # 使用精确模式对文本进行分词
-        word_counts = {}
-        # 获取词频字典
-        for word in words:
-            if len(word) == 1:
-                continue
-            else:
-                word_counts[word] = word_counts.get(word, 0) + 1
-        # 添加交互过滤低频词的功能
-        min_freq = st.slider("设置最低词频阈值", 0, max(word_counts.values()), 0)
-        word_counts = {word: freq for word, freq in word_counts.items() if freq >= min_freq}
-        # 字典按值从大到小取前20个
-        word_counts_20 = dict(sorted(word_counts.items(), key=lambda x: x[1], reverse=True)[:20])
-        # [()]
-        word_list = [(x,y) for x,y in word_counts_20.items()]
-        funnel = (
-            pyecharts.charts.Funnel()
-            .add(series_name="",data_pair=word_list)
-            .set_colors(["#FFD700", "#FFA500", "#FF4500", "#FF6347", "#FF8C00"])  # 设置漏斗图颜色
-            # .set_global_opts(title_opts=opts.TitleOpts(title="Funnel Chart"))
-            .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))  # 设置标签格式
-        )
-        st_echarts.st_pyecharts(funnel)
-
 
 def main():
     # 设置初始页面为Home
@@ -332,8 +329,8 @@ def main():
         page_box()
     elif page == '漏斗图':
         page_funnel()
-    # elif page == '影视推荐':
-        # page_movie()
+    elif page == '影视推荐':
+        page_movie()
     elif page == "国内天气":
         page_weather()
 
