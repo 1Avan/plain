@@ -11,7 +11,7 @@ import streamlit.components.v1 as components
 from pyecharts import options as opts
 # 汉字转拼音
 from pypinyin import pinyin, Style
-import gopup as gp
+# import gopup as gp
 import re # 正则表达式库
 # from nltk.corpus import stopwords # 停用词库
 
@@ -137,51 +137,51 @@ def page_box():
         xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=45))
     )
     st_echarts.st_pyecharts(boxplot)
-def page_movie():
-    df_index = gp.douban_movie_list()
-    df_index2 = gp.douban_week_praise_list()
-    dataList = list()
-    for item in df_index2.iterrows():
-        temList = list()
-        temList.append(item[1][0])
-        temList.append(item[1][3])
-        temList.append(item[1][2])
-        temList.append(item[1][1])
-        dataList.append(temList)
-    dataList = sorted(dataList, key=lambda x: x[1])
-    titleList = list()
-    scoreList = list()
-    imgList = list()
-    linkList = list()
-    for item in df_index.iterrows():
-        # print(item[1][2],item[1][0],item[1][5])
-        titleList.append(item[1][2])
-        scoreList.append(float(item[1][0]))
-        imgList.append(item[1][4])
-        linkList.append(item[1][5])
-    bar = Bar()
-    bar.add_xaxis(titleList)
-    bar.add_yaxis("豆瓣评分", scoreList)
-    # 设置 x 轴标签旋转角度为 45 度
-    bar.set_global_opts(
-        xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=20))
-    )
-    st.title("豆瓣新片榜")
-    st_echarts.st_pyecharts(bar)
-    expander_1 = st.expander('观看入口：')
-    # 循环遍历图片列表并显示图片
-    for i in range(len(imgList)):
-        # unsafe_allow_html允许write插入html标签
-        expander_1.write(f"<a href={linkList[i]}>{titleList[i]}</a>", unsafe_allow_html=True)
-    st.title("豆瓣一周口碑榜")
-    headers = ['影片', '排名', '趋势',"链接"]
-    # 编写HTML代码，包括表头和数据行
-    table_html = f"<table><thead><tr>{''.join(f'<th>{header}</th>' for header in headers)}</tr></thead><tbody>"
-    for row in dataList:
-        table_html += f"<tr>{''.join(f'<td>{data}</td>' for data in row)}</tr>"
-    table_html += "</tbody></table>"
-    # 使用st.write()函数显示自定义表格
-    st.write(table_html, unsafe_allow_html=True)
+# def page_movie():
+#     df_index = gp.douban_movie_list()
+#     df_index2 = gp.douban_week_praise_list()
+#     dataList = list()
+#     for item in df_index2.iterrows():
+#         temList = list()
+#         temList.append(item[1][0])
+#         temList.append(item[1][3])
+#         temList.append(item[1][2])
+#         temList.append(item[1][1])
+#         dataList.append(temList)
+#     dataList = sorted(dataList, key=lambda x: x[1])
+#     titleList = list()
+#     scoreList = list()
+#     imgList = list()
+#     linkList = list()
+#     for item in df_index.iterrows():
+#         # print(item[1][2],item[1][0],item[1][5])
+#         titleList.append(item[1][2])
+#         scoreList.append(float(item[1][0]))
+#         imgList.append(item[1][4])
+#         linkList.append(item[1][5])
+#     bar = Bar()
+#     bar.add_xaxis(titleList)
+#     bar.add_yaxis("豆瓣评分", scoreList)
+#     # 设置 x 轴标签旋转角度为 45 度
+#     bar.set_global_opts(
+#         xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=20))
+#     )
+#     st.title("豆瓣新片榜")
+#     st_echarts.st_pyecharts(bar)
+#     expander_1 = st.expander('观看入口：')
+#     # 循环遍历图片列表并显示图片
+#     for i in range(len(imgList)):
+#         # unsafe_allow_html允许write插入html标签
+#         expander_1.write(f"<a href={linkList[i]}>{titleList[i]}</a>", unsafe_allow_html=True)
+#     st.title("豆瓣一周口碑榜")
+#     headers = ['影片', '排名', '趋势',"链接"]
+#     # 编写HTML代码，包括表头和数据行
+#     table_html = f"<table><thead><tr>{''.join(f'<th>{header}</th>' for header in headers)}</tr></thead><tbody>"
+#     for row in dataList:
+#         table_html += f"<tr>{''.join(f'<td>{data}</td>' for data in row)}</tr>"
+#     table_html += "</tbody></table>"
+#     # 使用st.write()函数显示自定义表格
+#     st.write(table_html, unsafe_allow_html=True)
 def page_weather():
     # openweathermap api-key
     api_key = "12b2817fbec86915a6e9b4dbbd3d9036"
