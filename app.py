@@ -65,17 +65,18 @@ def textFn():
 def page_home():
     # 这是主页面
     word_counts_20 = textFn()
-    bar = Bar()
-    val = list(map(int, word_counts_20.values()))
-    wordList = list(word_counts_20.keys())
-    bar.add_xaxis(wordList)
-    bar.add_yaxis("关键词", val)
-    # 设置 x 轴标签旋转角度为 45 度
-    bar.set_global_opts(
-        xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=45))
-    )
-    # 使用 st_echarts.st_pyecharts() 方法将图表渲染到 Streamlit 中
-    st_echarts.st_pyecharts(bar)
+    if word_counts_20:
+        bar = Bar()
+        val = list(map(int, word_counts_20.values()))
+        wordList = list(word_counts_20.keys())
+        bar.add_xaxis(wordList)
+        bar.add_yaxis("关键词", val)
+        # 设置 x 轴标签旋转角度为 45 度
+        bar.set_global_opts(
+            xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=45))
+        )
+        # 使用 st_echarts.st_pyecharts() 方法将图表渲染到 Streamlit 中
+        st_echarts.st_pyecharts(bar)
 def page_ciyun():
     # 词云数据
     word_counts = textFn()
