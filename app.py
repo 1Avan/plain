@@ -332,7 +332,7 @@ def main():
     elif page == '漏斗图':
         page_funnel()
     elif page == '影视推荐':
-        page_movie()
+        # page_movie()
     elif page == "国内天气":
         page_weather()
 
